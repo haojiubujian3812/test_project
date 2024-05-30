@@ -1,0 +1,36 @@
+$text_color:rgb(162,164,180);
+//居中样式
+@mixin center{
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+//导航栏按钮
+@mixin button_style{
+  position: absolute;
+  width: 10%;
+  height: 6%;
+  top: 1%;
+}
+//flex布局
+@mixin flex_style($direction){
+  display: flex;
+  flex-direction: $direction;
+  gap: 3%;
+}
+//盒子样式
+@mixin box_style {
+  flex: 1;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.57);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+  display: flex;
+}
+//图表大小
+@mixin graph_style($height:100%,$width:100%){
+  position: absolute;
+  height: $height;
+  width: $width;
+}
