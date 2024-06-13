@@ -1,25 +1,26 @@
 <template>
   <div>
-    <el-input v-model="patientId" placeholder="请输入患者ID"></el-input>
-    <el-button type="primary" @click="loadPatientData">加载患者数据</el-button>
-    <el-card v-if="patientData" class="patient-data-card">
-      <h2>患者ID: {{ patientId }}</h2>
-      <div v-for="(record, index) in patientData" :key="index" class="record-item">
-        <h3>检查名称 {{ index + 1 }}:</h3>
-        <p>{{ record.checkName }}</p>
-        <p>结果: {{ record.result }}</p>
-        <p>参考值: {{ record.reference }}</p>
-        <p>时间: {{ record.time }}</p>
+    <el-input v-model="personId" placeholder="请输入就诊编码"></el-input>
+    <el-button type="primary" @click="loadBasyData">加载患者数据</el-button>
+    <el-card v-if="basyData" class="patient-data-card">
+      <div v-for="(record, index) in basyData" :key="index" class="record-item">
+        {{record}}
+        <h3>就诊编码： <p>{{ record['就诊编码']}}</p></h3>
+        <h3>住院次数： <p>{{ record['住院次数']}}</p></h3>
+        <h3>出院病区： <p>{{ record['出院病区']}}</p></h3>
       </div>
-    </el-card>
-    <el-card v-if="comorbidityWarnings" class="comorbidity-warnings-card">
-      <h2>共病预警</h2>
-      <ul>
-<!--        <li v-for="warning in comorbidityWarnings" :key="warning.id">-->
-          <h3>{{ warning.disease1 }} 和 {{ warning.disease2 }} 之间的关联性较高</h3>
-          <p>基于当前患者的检查结果，这两个疾病之间可能存在共病风险。</p>
-<!--        </li>-->
-      </ul>
+<!--      <div>就诊编码：{{ basyData['就诊编码'] }}</div>-->
+<!--      <div>住院次数：{{ basyData['住院次数'] }}</div>-->
+<!--      <div>入院日期：{{ basyData['入院日期'] }}</div>-->
+<!--      <div>出院日期：{{ basyData['出院日期'] }}</div>-->
+<!--      <div>出院病区：{{ basyData['出院病区'] }}</div>-->
+<!--      <div>主诊断名称：{{ basyData['主诊断名称'] }}</div>-->
+<!--      &lt;!&ndash; 其他诊断名称 &ndash;&gt;-->
+<!--      <div v-if="basyData['其它诊断名称1']">其它诊断名称1：{{ basyData['其它诊断名称1'] }}</div>-->
+<!--      <div v-if="basyData['其它诊断名称2']">其它诊断名称2：{{ basyData['其它诊断名称2'] }}</div>-->
+<!--      <div v-if="basyData['其它诊断名称3']">其它诊断名称3：{{ basyData['其它诊断名称3'] }}</div>-->
+<!--      <div v-if="basyData['其它诊断名称4']">其它诊断名称4：{{ basyData['其它诊断名称4'] }}</div>-->
+<!--      &lt;!&ndash; 其他信息 &ndash;&gt;-->
     </el-card>
   </div>
 </template>
@@ -27,106 +28,37 @@
 <script>
 import { ref } from 'vue';
 import axios from 'axios';
-import { JCJL_URL } from '@/api/api.js'; // 导入 URL
+import { BASY_URL } from '@/api/api.js'; // 导入 URL
 
 export default {
   setup() {
-    const patientId = ref('');
-    const patientData = ref(null);
-    const comorbidityWarnings = ref(null);
+    const personId = ref('1001Z810000001X5X3NE');
+    const basyData = ref(null);
 
-    async function loadPatientData() {
-      patientData.value = await fetchPatientData(patientId.value);
-      if (!patientData.value) {
+    async function loadBasyData() {
+      try {
+        const response = await axios.post(BASY_URL+'/'+encodeURIComponent(personId.value),{
+
+        });
+        console.log("3后端返回数据",response.data)
+        basyData.value = response.data;
+      } catch (error) {
+        console.error('Error fetching data:', error);
         alert('未找到对应的患者数据。');
       }
     }
 
-    async function fetchPatientData(patientId) {
-      try {
-        const response = await axios.get(JCJL_URL, { params: { patientId: patientId } });
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
-      }
-    }
-
-
-    // 假设关联规则数据如下：
-    const rules = [
-      { antecedents: ['病种A'], consequents: ['病种B'], confidence: 0.8 },
-      { antecedents: ['病种B'], consequents: ['病种C'], confidence: 0.6 },
-      { antecedents: ['病种C'], consequents: ['病种A'], confidence: 0.6 },
-      { antecedents: ['病种D'], consequents: ['病种A'], confidence: 0.6 },
-      { antecedents: ['病种D'], consequents: ['病种C'], confidence: 0.6 },
-      { antecedents: ['病种A'], consequents: ['病种C'], confidence: 0.6 },
-    ];
-    function identifyComorbiditiesFromRules(rules) {
-      // 过滤出共病规则，这里假设confidence阈值以上为共病规则
-      const comorbidityThreshold = 0.5;
-      const comorbidities = rules.filter(rule => {
-        // 检查规则的置信度是否超过阈值
-        return rule.confidence >= comorbidityThreshold;
-      });
-
-      // 进一步处理，例如只提取病种名称
-      const simplifiedComorbidities = comorbidities.map(rule => {
-        return {
-          antecedent: rule.antecedents.join(' 和 '), // 假设antecedents是数组
-          consequent: rule.consequents.join(' 和 '), // 假设consequents是数组
-          confidence: rule.confidence
-        };
-      });
-
-      return simplifiedComorbidities;
-    }
-    console.log(identifyComorbiditiesFromRules(rules))
-//     async function identifyComorbidities() {
-//       // 这里应该是实现共病识别的逻辑，例如使用Apriori算法
-//       // 假设我们已经有了一个共病识别函数
-//       const comorbidities = identifyComorbiditiesFromPatientData(patientData.value);
-//       comorbidityWarnings.value = comorbidities;
-//
-// // 调用函数并赋值给comorbidityWarnings
-//       const comorbidityWarnings = identifyComorbiditiesFromRules(rules);
-// // 输出共病警告信息
-//       console.log(comorbidityWarnings);
-//     }
-
     return {
-      patientId,
-      patientData,
-      comorbidityWarnings,
-      loadPatientData,
-      // identifyComorbidities,
+      personId,
+      basyData,
+      loadBasyData
     };
   }
 };
 </script>
 
-<style/>
-.health-profile-card {
+<style>
+.patient-data-card {
   margin-top: 20px;
 }
-
-.record-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-}
-
-.record-item h3 {
-  margin: 0;
-  font-size: 1em;
-}
-
-.record-item p {
-  margin: 0;
-  font-size: 0.9em;
-  color: #333;
-}
-
-<style/>
+</style>
