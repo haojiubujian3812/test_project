@@ -20,6 +20,9 @@
       <div class="right-boxes">
         <div class="box box-right-1" style="background-color: #c0c0c0;">
           <diseaseCorrelationChart> </diseaseCorrelationChart>
+          <p>共病关联分析：</p>
+          疾病共现分析：分析患者数据库，识别常见的疾病组合。
+          风险因素关联：确定哪些生活方式或遗传因素与共病有关。
         </div>
         <div class="box box-right-2" style="background-color: #b0b0b0;">
           <p>疾病预测模型：</p>
