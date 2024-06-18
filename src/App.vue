@@ -6,6 +6,7 @@
     <div class="content">
       <div class="left-boxes">
         <div class="box box-left-1" style="background-color: #f0f0f0;">
+
           <checkResult></checkResult>
         </div>
         <div class="box box-left-2" style="background-color: #e0e0e0;">
@@ -21,7 +22,9 @@
           <diseaseCorrelationChart> </diseaseCorrelationChart>
         </div>
         <div class="box box-right-2" style="background-color: #b0b0b0;">
-          <hello-world> </hello-world>
+          <p>疾病预测模型：</p>
+          风险评估：基于患者的个人信息和病史，评估未来患某种疾病的风险。
+          预测模型：使用机器学习算法来预测疾病的发展趋势。
         </div>
       </div>
     </div>
