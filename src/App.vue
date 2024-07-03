@@ -6,7 +6,7 @@
     <div class="content">
       <div class="left-boxes">
         <div class="box box-left-1" style="background-color: #f0f0f0;">
-
+<div>111</div>div>
           <checkResult></checkResult>
         </div>
         <div class="box box-left-2" style="background-color: #e0e0e0;">
